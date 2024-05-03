@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 ServerObject server = new ServerObject();
 await server.ListenAsync();
@@ -8,6 +9,8 @@ class ServerObject
 {
     TcpListener tcpListener = new TcpListener(IPAddress.Any, 8888);
     List<ClientObject> clients = new List<ClientObject>();
+    TextObject textObject = new TextObject();
+    public bool Wait = true;
     protected internal void RemoveConnection(string id)
     {
         ClientObject? client = clients.FirstOrDefault(c => c.Id == id);
@@ -16,15 +19,24 @@ class ServerObject
     }
     protected internal async Task ListenAsync()
     {
+        Console.CursorVisible = false;
         try
         {
             tcpListener.Start();
-            Console.WriteLine("Сервер запущен. Ожидание подключений...");
+            // Console.WriteLine("Сервер запущен. Ожидание подключений...");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            textObject.PrintCentered("Сервер запущен. Ожидание подключений...");
+            Console.ResetColor();
 
             while (true)
             {
                 TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
-
+                if (Wait)
+                {
+                    Wait = false;
+                    Console.Clear();
+                }
+                
                 ClientObject clientObject = new ClientObject(tcpClient, this);
                 clients.Add(clientObject);
                 Task.Run(clientObject.ProcessAsync);
@@ -119,5 +131,47 @@ class ClientObject
         Writer.Close();
         Reader.Close();
         client.Close();
+    }
+}
+class TextObject
+{
+    protected internal bool Fade = false;
+    protected internal void PrintCentered(string text)
+    {
+        int length = text.Length;
+        int cursor = 0;
+
+        while (length > Console.WindowWidth)
+        {
+            string newLine = text.Substring(cursor, Console.WindowWidth - 4);
+            int lineLength = newLine.LastIndexOf(' ');
+            cursor += lineLength;
+            text = text.Insert(cursor, "\n");
+            length -= lineLength;
+        }
+
+        string[] lines = Regex.Split(text, "\r\n|\r|\n");
+        int left = 0;
+        int top = (Console.WindowHeight / 2) - (lines.Length / 2) - 1;
+        int center = Console.WindowWidth / 2;
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            left = center - (lines[i].Length / 2);
+            Console.SetCursorPosition(left, top);
+            if (Fade)
+            {
+                foreach (char letter in lines[i])
+                {
+                    Console.CursorVisible = true;
+                    Console.Write(letter);
+                    Thread.Sleep(15);
+                    Console.CursorVisible = false;
+                }
+                Console.WriteLine();
+            }
+            else Console.WriteLine(lines[i]);
+            top = Console.CursorTop;
+        }
     }
 }

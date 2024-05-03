@@ -33,6 +33,7 @@ async Task SendMessageAsync(StreamWriter writer)
     await writer.WriteLineAsync(userName);
     await writer.FlushAsync();
     Console.WriteLine("Для отправки сообщений введите сообщение и нажмите Enter");
+    Console.WriteLine();
 
     while (true)
     {

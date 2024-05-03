@@ -1,2 +1,6 @@
 ﻿.idea
 client/.vs
+server/bin
+server/obj
+client/bin
+client/obj
