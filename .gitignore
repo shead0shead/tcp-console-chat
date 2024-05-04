@@ -1,4 +1,5 @@
 ﻿.idea
+server/.vs
 client/.vs
 server/bin
 server/obj
