@@ -2,25 +2,25 @@
 using client;
 
 Params @params = new Params();
-Language @language = new Language();
-Translate @translate = new Translate();
+Language language = new Language();
+Translate translate = new Translate();
 
-@language.menu();
+language.typing();
 
 string host = "127.0.0.1";
-Console.Write(@translate.text(1, language.language));
+Console.Write(translate.text(1, language.language));
 host = Console.ReadLine();
 int port = 8888;
 using TcpClient client = new TcpClient();
 
-Console.Write(@translate.text(2, language.language));
+Console.Write(translate.text(2, language.language));
 @params.userName = Console.ReadLine();
 
-Console.Write(@translate.text(3, language.language));
+Console.Write(translate.text(3, language.language));
 string? nameColor = Console.ReadLine().ToLower();
 
 Console.Clear();
-Console.WriteLine(@translate.text(4, language.language));
+Console.WriteLine(translate.text(4, language.language));
 StreamReader? Reader = null;
 StreamWriter? Writer = null;
 
@@ -46,7 +46,7 @@ async Task SendMessageAsync(StreamWriter writer)
     await writer.FlushAsync();
     await writer.WriteLineAsync(nameColor);
     await writer.FlushAsync();
-    Console.WriteLine(@translate.text(5, language.language));
+    Console.WriteLine(translate.text(5, language.language));
     Console.WriteLine();
 
     while (true)
