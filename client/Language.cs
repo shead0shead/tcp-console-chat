@@ -47,4 +47,21 @@ public class Language
 
         Console.ResetColor();
     }
+    public void typing()
+    {
+        string[] langs = ["english", "russian"];
+        
+        Console.WriteLine("Choose your language");
+        Console.WriteLine();
+        Console.WriteLine("Available langs:");
+        Console.WriteLine("1. English");
+        Console.WriteLine("2. Russian");
+        Console.WriteLine();
+        Console.Write("Write number: ");
+
+        byte num = byte.Parse(Console.ReadLine());
+        language = langs[num-1];
+        
+        Console.Clear();
+    }
 }
