@@ -24,7 +24,6 @@ class ServerObject
         try
         {
             tcpListener.Start();
-            // Console.WriteLine("Сервер запущен. Ожидание подключений...");
             Console.ForegroundColor = ConsoleColor.Yellow;
             // textObject.PrintCentered("Сервер запущен. Ожидание подключений...");
             textObject.PrintCentered("Server started. Waiting connections...");
@@ -56,12 +55,16 @@ class ServerObject
         }
     }
 
-    protected internal async Task BroadcastMessageAsync(string message, string id)
+    protected internal async Task BroadcastMessageAsync(string name, string message, string nameColor, string id)
     {
         foreach (var client in clients)
         {
             if (client.Id != id)
             {
+                await client.Writer.WriteLineAsync(name);
+                await client.Writer.FlushAsync();
+                await client.Writer.WriteLineAsync(nameColor);
+                await client.Writer.FlushAsync();
                 await client.Writer.WriteLineAsync(message);
                 await client.Writer.FlushAsync();
             }
@@ -114,24 +117,45 @@ class ClientObject
         try
         {
             string? userName = await Reader.ReadLineAsync();
-            string? message = $"{userName} вошел в чат";
-            await server.BroadcastMessageAsync(message, Id);
-            Console.WriteLine(message);
+            string? nameColorA = await Reader.ReadLineAsync();
+            ConsoleColor nameColor = ConsoleColor.Gray;
+            if (nameColorA.ToLower() == "red") nameColor = ConsoleColor.Red; 
+            else if (nameColorA.ToLower() == "green") nameColor = ConsoleColor.Green;
+            else if (nameColorA.ToLower() == "blue") nameColor = ConsoleColor.Blue;
+            else if (nameColorA.ToLower() == "yellow") nameColor = ConsoleColor.Yellow;
+            else if (nameColorA.ToLower() == "magenta") nameColor = ConsoleColor.Magenta;
+            else if (nameColorA.ToLower() == "cyan") nameColor = ConsoleColor.Cyan;
+            // string? message = "вошел в чат";
+            string? message = "logged";
+            await server.BroadcastMessageAsync(userName, message, nameColorA, Id);
+            Console.ForegroundColor = nameColor;
+            Console.Write(userName);
+            Console.ResetColor();
+            Console.Write(" " + message);
+            Console.WriteLine();
             while (true)
             {
                 try
                 {
                     message = await Reader.ReadLineAsync();
                     if (message == null) continue;
-                    message = $"{userName}: {message}";
-                    Console.WriteLine(message);
-                    await server.BroadcastMessageAsync(message, Id);
+                    Console.ForegroundColor = nameColor;
+                    Console.Write(userName);
+                    Console.ResetColor();
+                    Console.Write(": " + message);
+                    Console.WriteLine();
+                    await server.BroadcastMessageAsync(userName, message, nameColorA, Id);
                 }
                 catch
                 {
-                    message = $"{userName} покинул чат";
-                    Console.WriteLine(message);
-                    await server.BroadcastMessageAsync(message, Id);
+                    // message = "покинул чат";
+                    message = "logged out";
+                    Console.ForegroundColor = nameColor;
+                    Console.Write(userName);
+                    Console.ResetColor();
+                    Console.Write(" " + message);
+                    Console.WriteLine();
+                    await server.BroadcastMessageAsync(userName, message, nameColorA, Id);
                     break;
                 }
             }
