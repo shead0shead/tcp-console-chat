@@ -11,6 +11,7 @@ class ServerObject
     List<ClientObject> clients = new List<ClientObject>();
     TextObject textObject = new TextObject();
     public bool Wait = true;
+    public int[] WindowSize = [Console.WindowWidth, Console.WindowHeight];
     protected internal void RemoveConnection(string id)
     {
         ClientObject? client = clients.FirstOrDefault(c => c.Id == id);
@@ -25,9 +26,12 @@ class ServerObject
             tcpListener.Start();
             // Console.WriteLine("Сервер запущен. Ожидание подключений...");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            textObject.PrintCentered("Сервер запущен. Ожидание подключений...");
+            // textObject.PrintCentered("Сервер запущен. Ожидание подключений...");
+            textObject.PrintCentered("Server started. Waiting connections...");
             Console.ResetColor();
 
+            Task.Run(() => CheckSizeAsync());
+            
             while (true)
             {
                 TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
@@ -70,6 +74,21 @@ class ServerObject
             client.Close();
         }
         tcpListener.Stop();
+    }
+    protected internal async Task CheckSizeAsync()
+    {
+        while (Wait)
+        {
+            if (Console.WindowWidth != WindowSize[0] || Console.WindowHeight != WindowSize[1])
+            {
+                Console.Clear();
+                WindowSize = [Console.WindowWidth, Console.WindowHeight];
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                // textObject.PrintCentered("Сервер запущен. Ожидание подключений...");
+                textObject.PrintCentered("Server started. Waiting connections...");
+                Console.ResetColor();
+            }
+        }
     }
 }
 class ClientObject

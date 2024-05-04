@@ -1,14 +1,17 @@
 ﻿using System.Net.Sockets;
 
 string host = "127.0.0.1";
-Console.Write("Введите IP для подключения: ");
+// Console.Write("Введите IP для подключения: ");
+Console.Write("Write IP address for connection: ");
 host = Console.ReadLine();
 int port = 8888;
 using TcpClient client = new TcpClient();
-Console.Write("Введите свое имя: ");
+// Console.Write("Введите свое имя: ");
+Console.Write("Write your name: ");
 string? userName = Console.ReadLine();
 Console.Clear();
-Console.WriteLine($"Добро пожаловать, {userName}");
+// Console.WriteLine($"Добро пожаловать, {userName}");
+Console.WriteLine($"Welcome, {userName}");
 StreamReader? Reader = null;
 StreamWriter? Writer = null;
 
