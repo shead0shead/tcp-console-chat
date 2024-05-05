@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿﻿using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
@@ -128,10 +128,10 @@ class ClientObject
             // string? message = "вошел в чат";
             string? message = "logged";
             await server.BroadcastMessageAsync(userName, message, nameColorA, Id);
+            Console.Write("+ ");
             Console.ForegroundColor = nameColor;
             Console.Write(userName);
             Console.ResetColor();
-            Console.Write(" " + message);
             Console.WriteLine();
             while (true)
             {
@@ -150,10 +150,10 @@ class ClientObject
                 {
                     // message = "покинул чат";
                     message = "logged out";
+                    Console.Write("- ");
                     Console.ForegroundColor = nameColor;
                     Console.Write(userName);
                     Console.ResetColor();
-                    Console.Write(" " + message);
                     Console.WriteLine();
                     await server.BroadcastMessageAsync(userName, message, nameColorA, Id);
                     break;
